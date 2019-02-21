@@ -28,7 +28,7 @@
                     <DataTemplate>
                         <ViewCell>
                             <StackLayout Padding="10">
-                                <Switch Style="{DynamicResource ListItemTextStyle}" IsToggled="{Binding Switch}" />
+                                <Switch IsToggled="{Binding Switch, Mode=TwoWay}" />
                                 <Label Text="{Binding Text}" 
                        LineBreakMode="NoWrap" 
                        Style="{DynamicResource ListItemTextStyle}" 
