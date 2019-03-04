@@ -15,7 +15,7 @@
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout>
-            <ListView x:Name="ItemsListView" 
+            <ListView x:Name="ItemsListView"
                 ItemsSource="{Binding Items}"
                 VerticalOptions="FillAndExpand"
                  HasUnevenRows="true"
@@ -27,16 +27,16 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout Padding="10">
-                                <Switch IsToggled="{Binding Switch, Mode=TwoWay}" />
-                                <Label Text="{Binding Text}" 
+                            <StackLayout Padding="1" VerticalOptions="Start">
+                                <Switch IsToggled="{Binding Switch}" />
+                                <!--<Label Text="{Binding Text}" 
                        LineBreakMode="NoWrap" 
                        Style="{DynamicResource ListItemTextStyle}" 
-                       FontSize="16" />
-                                <Label Text="{Binding Description}" 
+                       FontSize="13" />-->
+                                <Label Text="{Binding Text}" 
                        LineBreakMode="NoWrap"
                        Style="{DynamicResource ListItemDetailTextStyle}"
-                       FontSize="13" />
+                       FontSize="20" />
                             </StackLayout>
                         </ViewCell>
                     </DataTemplate>

@@ -43,6 +43,8 @@ namespace android.Views
             if (item == null)
                 return;
 
+            viewModel.Items.Remove(item);
+
             await Navigation.PushAsync(new ItemDetailPage(new ItemDetailViewModel(item)));
 
             // Manually deselect item.
@@ -60,6 +62,10 @@ namespace android.Views
 
             if (viewModel.Items.Count == 0)
                 viewModel.LoadItemsCommand.Execute(null);
+        }
+
+        private void ItemSwitched(object sender, ToggledEventArgs e)
+        {
         }
     }
 }
