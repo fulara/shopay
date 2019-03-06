@@ -9,6 +9,7 @@ namespace android.ViewModels
         public Item Item { get; set; }
         public ItemDetailViewModel(Item item = null)
         {
+            DataStore.ToString();
             Title = item?.Text;
             Item = item;
         }

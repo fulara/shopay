@@ -32,7 +32,6 @@ namespace android.ViewModels
             {
                 var newItem = item as Item;
                 item.SwitchChanged += Item_SwitchChanged;
-                Console.WriteLine("adding???");
                 Items.Add(newItem);
                 await DataStore.AddItemAsync(newItem);
             });
@@ -51,7 +50,6 @@ namespace android.ViewModels
                 var items = await DataStore.GetItemsAsync(true);
                 foreach (var item in items)
                 {
-                    Console.WriteLine("adding??");
                     item.SwitchChanged += Item_SwitchChanged;
                     Items.Add(item);
                 }
@@ -72,7 +70,11 @@ namespace android.ViewModels
             for (int i = 0; i < items.Count; i++)
             {
                 var curr = items.IndexOf(sorted[i]);
-                items.Move(curr, i);
+
+                if (curr != i)
+                {
+                    items.Move(curr, i);
+                }
             }
         }
     }

@@ -27,17 +27,20 @@
                 <ListView.ItemTemplate>
                     <DataTemplate>
                         <ViewCell>
-                            <StackLayout Padding="1" VerticalOptions="Start">
-                                <Switch IsToggled="{Binding Switch}" />
-                                <!--<Label Text="{Binding Text}" 
-                       LineBreakMode="NoWrap" 
-                       Style="{DynamicResource ListItemTextStyle}" 
-                       FontSize="13" />-->
-                                <Label Text="{Binding Text}" 
+                            <Grid>
+                                <Grid.RowDefinitions>
+
+                                </Grid.RowDefinitions>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="100" />
+                                </Grid.ColumnDefinitions>
+                                <Switch Grid.Row="0" Grid.Column="1" IsToggled="{Binding Switch}" />
+                                <Label Grid.Row="0" Grid.Column="0"  Text="{Binding Text}" 
                        LineBreakMode="NoWrap"
                        Style="{DynamicResource ListItemDetailTextStyle}"
                        FontSize="20" />
-                            </StackLayout>
+                            </Grid>
                         </ViewCell>
                     </DataTemplate>
                 </ListView.ItemTemplate>

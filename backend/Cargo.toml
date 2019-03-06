@@ -1,0 +1,11 @@
+[package]
+name = "backend"
+version = "0.1.0"
+authors = ["fulara <ntszar@gmail.com>"]
+edition = "2018"
+
+[dependencies]
+juniper = "0.10"
+juniper_iron = "0.2.0"
+iron = "0.6"
+mount = "0.4"

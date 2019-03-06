@@ -12,7 +12,20 @@ namespace android.ViewModels
 {
     public class BaseViewModel : INotifyPropertyChanged
     {
-        public IDataStore<Item> DataStore => DependencyService.Get<IDataStore<Item>>() ?? new MockDataStore();
+        public IDataStore<Item> DataStore
+        {
+            get
+            {
+                var ds = DependencyService.Get<IDataStore<Item>>();
+                if( ds == null)
+                {
+                    Console.WriteLine("wtf.");
+                    //???
+                }
+                return ds;
+            }
+        }
+            //
 
         bool isBusy = false;
         public bool IsBusy

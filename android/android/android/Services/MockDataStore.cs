@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using android.Models;
+using Xamarin.Forms;
 
+[assembly: Dependency(typeof(android.Services.MockDataStore))]
 namespace android.Services
 {
     public class MockDataStore : IDataStore<Item>
