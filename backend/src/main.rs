@@ -3,6 +3,11 @@ extern crate juniper_iron;
 extern crate iron;
 extern crate mount;
 
+use std::sync::{
+    RwLock,
+    Arc,
+};
+
 use mount::Mount;
 use iron::prelude::*;
 use juniper::EmptyMutation;
@@ -25,7 +30,7 @@ struct Item {
 }
 
 struct Context {
-
+    i : Arc<RwLock<i32>>,
 }
 
 impl juniper::Context for Context {
@@ -38,10 +43,9 @@ graphql_object!(Query: Context |&self| {
         "1.0"
     }
 
-    field potato(&executor) -> FieldResult<Potato> {
+    field potato(&executor, item : Item) -> FieldResult<Potato> {
         let context = executor.context();
-
-        Ok(Potato { name : "bla".to_owned(), category: "cat".to_owned()})
+        Ok(Potato { name : item.name, category: "cat".to_owned()})
     }
 });
 
@@ -49,25 +53,27 @@ struct Mutation;
 
 graphql_object!(Mutation: Context |&self| {
 
-    field createHuman(&executor, new_item: Item) -> FieldResult<Item> {
-        //let context = executor.context();
-        Ok(new_item)
+    field createHuman(&executor, new_item: Item) -> FieldResult<Potato> {
+        let context : &Context = executor.context();
+        let mut data : &mut i32  = &mut context.i.write().unwrap();
+
+        *data += 1;
+        Ok(Potato { name : data.to_string(), category: new_item.category })
     }
 });
 
 type Schema = juniper::RootNode<'static, Query, Mutation>;
 
-fn context_factory(_: &mut Request) -> IronResult<Context> {
-    Ok(Context {
-
-    })
-}
-
-
 fn main() {
     let mut mount = Mount::new();
 
-    let graphql_endpoint = GraphQLHandler::new(context_factory,
+    let x = Arc::new(RwLock::new(0));
+    let ct = move |_ : &mut Request| {
+        println!("ctx is being created.");
+        Ok(Context { i : x.clone()})
+    };
+
+    let graphql_endpoint = GraphQLHandler::new(ct,
                                                Query {},
                                                Mutation {});
 
