@@ -17,13 +17,6 @@ use juniper_iron::GraphQLHandler;
 use juniper::FieldResult;
 use juniper_iron::GraphiQLHandler;
 
-#[derive(GraphQLObject)]
-#[graphql(description="Potatko")]
-struct Potato {
-    name: String,
-    category: String,
-}
-
 #[derive(GraphQLObject, Clone, Debug)]
 #[graphql(description="just an item")]
 struct Item {
@@ -90,21 +83,12 @@ impl MemDb {
         self.items.clone()
     }
 
-    fn add(&mut self, new : AddItem) {
-        self.items.push(Item {
-            id : Self::generate_id(),
-            name : new.name,
-            bought : false,
-            category : "a".to_string(),
-        })
-    }
-
     fn clear(&mut self) -> i32 {
         let len = self.items.len();
 
         self.items.clear();
 
-        len as i32  // :(
+        len as i32  // graphql doesnt seem to handle usize.
     }
 
     fn update(&mut self, update : ClientUpdate) {
@@ -119,7 +103,8 @@ impl MemDb {
 
         update.removed.into_iter().for_each(|removed| self.items.retain(|item| item.id != removed.id));
 
-        update.changed.into_iter().for_each(|updated| self.items.iter().filter(|item| item.id == updated.id).for_each(|item| ()));
+        // not used for now.
+        // update.changed.into_iter().for_each(|updated| self.items.iter().filter(|item| item.id == updated.id).for_each(|_item| ()));
     }
 
     //placeholder
@@ -155,13 +140,7 @@ graphql_object!(Query: Context |&self| {
 struct Mutation;
 
 graphql_object!(Mutation: Context |&self| {
-// mutation{ addItem(newItem : { name:"potatko" }) { name }}
-    field addItem(&executor, new_item: AddItem) -> FieldResult<InputPlaceholderRet> {
-        executor.context().db.write().unwrap().add(new_item);
-        Ok(InputPlaceholderRet { name : "a".to_string() })
-    }
-
-//    mutation{ clear {count}}
+    //mutation{ clear {count}}
     field clear(&executor) -> FieldResult<ClearResult> {
         Ok(ClearResult { count : executor.context().db.write().unwrap().clear()})
     }
