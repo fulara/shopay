@@ -9,3 +9,16 @@ juniper = "0.10"
 juniper_iron = "0.2.0"
 iron = "0.6"
 mount = "0.4"
+
+magnet_schema = "0.8.0"
+magnet_derive = "0.8.0"
+
+avocado = "0.3.1"
+avocado_derive = "0.3.1"
+
+serde = "1.0"
+serde_derive = "1.0"
+
+bson = { version = "0.13.0", features = ["u2i"] }
+
+uuid = "0.7"
