@@ -33,7 +33,7 @@
                                 </Grid.RowDefinitions>
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="100" />
+                                    <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Switch Grid.Row="0" Grid.Column="1" IsToggled="{Binding Switch}" />
                                 <Label Grid.Row="0" Grid.Column="0"  Text="{Binding Text}" 

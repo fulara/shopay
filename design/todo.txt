@@ -1,0 +1,8 @@
+1. Implementacja listy
+a) widok listy
+b) dodawanie itemow
+c) widok/edycja itemu?
+
+
+for later
+Mozliwosc dodawania itemow do listy, poprzez skanowanie kodu kreskowego.
