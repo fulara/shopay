@@ -9,6 +9,8 @@ use std::sync::{
     Arc,
 };
 
+use std::collections::HashMap;
+
 use uuid::Uuid;
 
 use mount::Mount;
@@ -16,6 +18,7 @@ use iron::prelude::*;
 use juniper_iron::GraphQLHandler;
 use juniper::FieldResult;
 use juniper_iron::GraphiQLHandler;
+use std::collections::HashSet;
 
 #[derive(GraphQLObject, Clone, Debug)]
 #[graphql(description="just an item")]
@@ -24,43 +27,32 @@ struct Item {
     name: String,
     category: String,
     bought : bool,
+
+    last_update : i32,
 }
 
 #[derive(GraphQLInputObject)]
-struct AddedItem {
+struct ItemState {
+    id : String,
     name: String,
     category: String,
     bought : bool,
-}
-
-#[derive(GraphQLInputObject)]
-struct RemovedItem {
-    id : String,
-    name: String,
-}
-
-#[derive(GraphQLInputObject)]
-struct ChangedItem {
-    id: String,
+    updated_at : i32, //secs since epoch  - easier to serialize as millis :)
 }
 
 #[derive(GraphQLInputObject)]
 struct ClientUpdate {
-    added : Vec<AddedItem>,
-    removed : Vec<RemovedItem>,
-    changed : Vec<ChangedItem>,
-}
+    items : Vec<ItemState>,
 
-#[derive(GraphQLInputObject)]
-#[graphql(description="Placeholder")]
-struct AddItem {
-    name: String,
+    last_server_update : i32,
 }
 
 #[derive(GraphQLObject)]
-#[graphql(description="Placeholder")]
-struct InputPlaceholderRet {
-    name: String,
+struct ClientUpdateResponse {
+    present : Vec<Item>,
+    deleted : Vec<String>,
+
+    server_time : i32,
 }
 
 #[derive(GraphQLObject)]
@@ -69,18 +61,22 @@ struct ClearResult {
 }
 
 struct MemDb {
-    items : Vec<Item>,
+    items : HashMap<String, Item>,
+
+    historical_items : HashMap<String, Item>,
 }
 
 impl MemDb {
     fn new() -> Self {
         Self {
-            items : Vec::new(),
+            items : HashMap::new(),
+            historical_items: HashMap::new(),
+
         }
     }
 
     fn items(&self) -> Vec<Item> {
-        self.items.clone()
+        self.items.clone().into_iter().map(|(_k,v)| v ).into_iter().collect()
     }
 
     fn clear(&mut self) -> i32 {
@@ -91,20 +87,49 @@ impl MemDb {
         len as i32  // graphql doesnt seem to handle usize.
     }
 
-    fn update(&mut self, update : ClientUpdate) {
-        update.added.into_iter().for_each(|new| {
-            self.items.push(Item {
-                id : Self::generate_id(),
-                name : new.name,
-                category : new.category,
-                bought : new.bought,
-            })
+    fn update(&mut self, update : ClientUpdate) -> Vec<String> {
+        let client_ids : HashSet<_> = update.items.iter().map(|i| i.id.clone()).collect();
+        let mut items_removed_by_others = Vec::new();
+        update.items.into_iter().for_each(|new| {
+            if let Some(local) =  self.items.get_mut(&new.id) {
+                if local.last_update < new.updated_at {
+                    local.last_update = new.updated_at;
+                    local.bought = new.bought;
+                    local.category = new.category;
+                    local.name = new.name;
+                }
+            } else if self.historical_items.contains_key(&new.id) {
+                items_removed_by_others.push(new.id.clone());
+            } else {
+                self.items.insert(new.id.clone(), Item {
+                    id : new.id.clone(),
+                    name : new.name,
+                    category : new.category,
+                    bought : new.bought,
+                    last_update : new.updated_at,
+                });
+            }
         });
 
-        update.removed.into_iter().for_each(|removed| self.items.retain(|item| item.id != removed.id));
+        //now check any item locally known if their ts is > last client server update then its a new item to be pushed.
+        Self::detect_and_remove_items_deleted_by_client(client_ids, update.last_server_update, &mut self.items, &mut self.historical_items);
 
-        // not used for now.
-        // update.changed.into_iter().for_each(|updated| self.items.iter().filter(|item| item.id == updated.id).for_each(|_item| ()));
+        items_removed_by_others
+    }
+
+    fn detect_and_remove_items_deleted_by_client(client_ids : HashSet<String>, client_last_server_update : i32, local_items : &mut HashMap<String, Item>, historical_items : &mut HashMap<String, Item>) {
+        local_items.retain(| local_id, local_item | {
+            if !client_ids.contains(local_id) {
+                if local_item.last_update < client_last_server_update {
+                    historical_items.insert(local_id.clone(), local_item.clone());
+                    false
+                } else {
+                    true
+                }
+            }  else {
+                true
+            }
+        })
     }
 
     //placeholder
@@ -145,12 +170,30 @@ graphql_object!(Mutation: Context |&self| {
         Ok(ClearResult { count : executor.context().db.write().unwrap().clear()})
     }
 
-    //mutation{ update(data: { added :[ { name:"p", category:"c", bought:false }], removed:[], changed:[], }) { name}}
-    field update(&executor, data : ClientUpdate) -> FieldResult<Vec<Item>> {
+    //mutation {
+    //  update(data :{ lastServerUpdate : 1, items:  [ { id:"3", name:"blaxa", category:"cat", bought:false, updatedAt:2  } ]   }) {
+    //    present {
+    //      id,
+    //      name,
+    //      category,
+    //      bought,
+    //      lastUpdate,
+    //    }
+    //   serverTime
+    //  }
+    //}
+    field update(&executor, data : ClientUpdate) -> FieldResult<ClientUpdateResponse> {
+        let lsu = data.last_server_update;
+
         let context = executor.context();
-        let  db = &mut context.db.write().unwrap();
-        db.update(data);
-        Ok(db.items())
+        let db = &mut context.db.write().unwrap();
+        let deleted = db.update(data);
+
+        Ok(ClientUpdateResponse {
+            deleted,
+            present: db.items(),
+            server_time : lsu + 10, // to make life easier for now.
+        })
     }
 });
 

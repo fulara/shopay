@@ -9,7 +9,18 @@ namespace android.Models
         public string Id { get; set; }
         public string Text { get; set; }
         public string Description { get; set; }
-        public int Quantity { get; set; }
+        public double Amount { get; set; }
+        public string Unit { get; set; } = "";
+        public string Quantity { get
+            {
+                if(Amount == 0.0)
+                {
+                    return "";
+                }
+
+                return Amount.ToString() + " " + Unit;
+
+            } }
 
         public bool Switch { get
             {
@@ -20,8 +31,6 @@ namespace android.Models
                 if (switch_ != value)
                 {
                     switch_ = value;
-
-                    Console.WriteLine("wuut? " + Text);
                     SwitchChanged.Invoke(this);
                 }
             }

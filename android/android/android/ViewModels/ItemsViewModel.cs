@@ -12,6 +12,7 @@ using android.Views;
 using GraphQL.Client;
 using GraphQL.Common.Request;
 using Newtonsoft.Json;
+using android.Services;
 
 namespace android.ViewModels
 {
@@ -70,26 +71,27 @@ namespace android.ViewModels
 
         private void Item_SwitchChanged(Item obj)
         {
-            var c = new Command(async () =>
-            {
-                var req = new GraphQLRequest();
-                req.Query = @"mutation{ update(data: { added :[ { name:""p"", category:""c"", bought:false }], removed:[], changed:[], }) { name}}";
+            //ServerCommunicator.Instance.Push();
+            //var c = new Command(async () =>
+            //{
+            //    var req = new GraphQLRequest();
+            //    req.Query = @"mutation{ update(data: { added :[ { name:""p"", category:""c"", bought:false }], removed:[], changed:[], }) { name}}";
 
-                try
-                {
-                    var graphQLClient = new GraphQLClient("http://192.168.0.248:4000/graphql");
-                    var post = await graphQLClient.PostAsync(req);
-                    Console.WriteLine("posting that request");
-                    Console.WriteLine("request finished: " + post.Data.ToString());
-                } catch(Exception e)
-                {
-                    Console.WriteLine("wtf?" + e.Message + " " + e.Data);
-                }
-                //var s = post.Result.ToString();
-                //Console.WriteLine("posting that request" + s); 
-            });
+            //    try
+            //    {
+            //        var graphQLClient = new GraphQLClient("http://192.168.0.248:4000/graphql");
+            //        var post = await graphQLClient.PostAsync(req);
+            //        Console.WriteLine("posting that request");
+            //        Console.WriteLine("request finished: " + post.Data.ToString());
+            //    } catch(Exception e)
+            //    {
+            //        Console.WriteLine("wtf?" + e.Message + " " + e.Data);
+            //    }
+            //    //var s = post.Result.ToString();
+            //    //Console.WriteLine("posting that request" + s); 
+            //});
 
-            c.Execute(null);
+            //c.Execute(null);
 
             var sorted = items.OrderBy(x => x).ToList();
             for (int i = 0; i < items.Count; i++)
