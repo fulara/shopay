@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
 
@@ -6,11 +7,22 @@ namespace android.Models
 {
     public class Item : IComparable<Item>
     {
+        [JsonProperty("id")]
         public string Id { get; set; }
+        [JsonProperty("name")]
         public string Text { get; set; }
+        [JsonProperty("description")]
         public string Description { get; set; }
+        [JsonProperty("category")]
+        public string Category { get; set; }
+        [JsonProperty("amount")]
         public double Amount { get; set; }
+        [JsonProperty("unit")]
         public string Unit { get; set; } = "";
+
+        bool bought;
+        int lastUpdate;
+
         public string Quantity { get
             {
                 if(Amount == 0.0)

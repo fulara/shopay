@@ -25,9 +25,12 @@ use std::collections::HashSet;
 struct Item {
     id : String,
     name: String,
+    description: String,
     category: String,
-    bought : bool,
+    amount: String,
+    unit: String,
 
+    bought : bool,
     last_update : i32,
 }
 
@@ -35,7 +38,11 @@ struct Item {
 struct ItemState {
     id : String,
     name: String,
+    description: String,
     category: String,
+    amount: String,
+    unit: String,
+
     bought : bool,
     updated_at : i32, //secs since epoch  - easier to serialize as millis :)
 }
@@ -97,6 +104,9 @@ impl MemDb {
                     local.bought = new.bought;
                     local.category = new.category;
                     local.name = new.name;
+                    local.description = new.description;
+                    local.amount = new.amount;
+                    local.unit = new.unit;
                 }
             } else if self.historical_items.contains_key(&new.id) {
                 items_removed_by_others.push(new.id.clone());
@@ -105,7 +115,12 @@ impl MemDb {
                     id : new.id.clone(),
                     name : new.name,
                     category : new.category,
+                    description: new.description,
+                    amount: new.amount,
+                    unit: new.unit,
+
                     bought : new.bought,
+
                     last_update : new.updated_at,
                 });
             }
@@ -170,18 +185,18 @@ graphql_object!(Mutation: Context |&self| {
         Ok(ClearResult { count : executor.context().db.write().unwrap().clear()})
     }
 
-    //mutation {
-    //  update(data :{ lastServerUpdate : 1, items:  [ { id:"3", name:"blaxa", category:"cat", bought:false, updatedAt:2  } ]   }) {
-    //    present {
-    //      id,
-    //      name,
-    //      category,
-    //      bought,
-    //      lastUpdate,
-    //    }
-    //   serverTime
-    //  }
-    //}
+//    mutation {
+//        update(data :{ lastServerUpdate : 1, items:  [ { id:"4", name:"potato", description:"supa", category:"cat", amount: "1.0", unit: "m",  bought:false, updatedAt:2  } ]   }) {
+//            present {
+//              id,
+//              name,
+//              category,
+//              bought,
+//              lastUpdate,
+//            }
+//           serverTime
+//          }
+//        }
     field update(&executor, data : ClientUpdate) -> FieldResult<ClientUpdateResponse> {
         let lsu = data.last_server_update;
 

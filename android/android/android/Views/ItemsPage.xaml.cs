@@ -10,9 +10,18 @@ using Xamarin.Forms.Xaml;
 using android.Models;
 using android.Views;
 using android.ViewModels;
+using GraphQL.Common.Request;
+using GraphQL.Client;
+using Newtonsoft.Json;
+using android.Services;
 
 namespace android.Views
 {
+    struct Items
+    {
+        public List<Item> items;
+    }
+
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ItemsPage : ContentPage
     {
@@ -54,6 +63,11 @@ namespace android.Views
         async void AddItem_Clicked(object sender, EventArgs e)
         {
             await Navigation.PushModalAsync(new NavigationPage(new NewItemPage()));
+        }
+
+        async void TestItem_Clicked(object sender, EventArgs e)
+        {
+            viewModel.FetchItemsAsync();
         }
 
         protected override void OnAppearing()

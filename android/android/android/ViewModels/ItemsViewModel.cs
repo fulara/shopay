@@ -19,18 +19,21 @@ namespace android.ViewModels
     public class ItemsViewModel : BaseViewModel
     {
         ObservableCollection<Item> items;
-        public ObservableCollection<Item> Items { get {
-                return items;
-            } set {
-                items = value;
+        public ObservableCollection<Item> Items
+        {
+            get
+            {
+                return itemStore.ObservableItems;
             }
         }
+
+        private ItemStore itemStore = new ItemStore();
+
         public Command LoadItemsCommand { get; set; }
 
         public ItemsViewModel()
         {
             Title = "Browse";
-            Items = new ObservableCollection<Item>();
             LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
 
             MessagingCenter.Subscribe<NewItemPage, Item>(this, "AddItem", async (obj, item) =>
@@ -53,11 +56,18 @@ namespace android.ViewModels
             {
                 Items.Clear();
                 var items = await DataStore.GetItemsAsync(true);
+                var remote_items = await Fetcher.ItemsAsync();
                 foreach (var item in items)
                 {
-                    item.SwitchChanged += Item_SwitchChanged;
-                    Items.Add(item);
+                    //item.SwitchChanged += Item_SwitchChanged;
+                    //Items.Add(item);
                 }
+
+                //foreach (var remote_item in remote_items.items)
+                //{
+                    //remote_item.SwitchChanged += Item_SwitchChanged;
+                    //Items.Add(remote_item);
+                //}
             }
             catch (Exception ex)
             {
@@ -71,38 +81,12 @@ namespace android.ViewModels
 
         private void Item_SwitchChanged(Item obj)
         {
-            //ServerCommunicator.Instance.Push();
-            //var c = new Command(async () =>
-            //{
-            //    var req = new GraphQLRequest();
-            //    req.Query = @"mutation{ update(data: { added :[ { name:""p"", category:""c"", bought:false }], removed:[], changed:[], }) { name}}";
+            itemStore.SortObservable();
+        }
 
-            //    try
-            //    {
-            //        var graphQLClient = new GraphQLClient("http://192.168.0.248:4000/graphql");
-            //        var post = await graphQLClient.PostAsync(req);
-            //        Console.WriteLine("posting that request");
-            //        Console.WriteLine("request finished: " + post.Data.ToString());
-            //    } catch(Exception e)
-            //    {
-            //        Console.WriteLine("wtf?" + e.Message + " " + e.Data);
-            //    }
-            //    //var s = post.Result.ToString();
-            //    //Console.WriteLine("posting that request" + s); 
-            //});
-
-            //c.Execute(null);
-
-            var sorted = items.OrderBy(x => x).ToList();
-            for (int i = 0; i < items.Count; i++)
-            {
-                var curr = items.IndexOf(sorted[i]);
-
-                if (curr != i)
-                {
-                    items.Move(curr, i);
-                }
-            }
+        public async void FetchItemsAsync()
+        {
+            itemStore.HandleSnapshot(await Fetcher.ItemsAsync());
         }
     }
 }
