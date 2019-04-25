@@ -18,7 +18,6 @@ namespace android.ViewModels
 {
     public class ItemsViewModel : BaseViewModel
     {
-        ObservableCollection<Item> items;
         public ObservableCollection<Item> Items
         {
             get
@@ -39,13 +38,12 @@ namespace android.ViewModels
             MessagingCenter.Subscribe<NewItemPage, Item>(this, "AddItem", async (obj, item) =>
             {
                 var newItem = item as Item;
-                item.SwitchChanged += Item_SwitchChanged;
                 Items.Add(newItem);
                 await DataStore.AddItemAsync(newItem);
             });
         }
 
-    async Task ExecuteLoadItemsCommand()
+        async Task ExecuteLoadItemsCommand()
         {
             if (IsBusy)
                 return;
@@ -56,18 +54,7 @@ namespace android.ViewModels
             {
                 Items.Clear();
                 var items = await DataStore.GetItemsAsync(true);
-                var remote_items = await Fetcher.ItemsAsync();
-                foreach (var item in items)
-                {
-                    //item.SwitchChanged += Item_SwitchChanged;
-                    //Items.Add(item);
-                }
-
-                //foreach (var remote_item in remote_items.items)
-                //{
-                    //remote_item.SwitchChanged += Item_SwitchChanged;
-                    //Items.Add(remote_item);
-                //}
+                itemStore.HandleSnapshot((await Fetcher.ItemsAsync()).items);
             }
             catch (Exception ex)
             {
@@ -79,14 +66,12 @@ namespace android.ViewModels
             }
         }
 
-        private void Item_SwitchChanged(Item obj)
-        {
-            itemStore.SortObservable();
-        }
 
-        public async void FetchItemsAsync()
+
+        public async Task FetchItemsAsync()
         {
-            itemStore.HandleSnapshot(await Fetcher.ItemsAsync());
+            var items = await Fetcher.ItemsAsync();
+            itemStore.HandleSnapshot(items.items);
         }
     }
 }

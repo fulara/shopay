@@ -7,22 +7,26 @@ namespace android.Models
 {
     public class Item : IComparable<Item>
     {
-        [JsonProperty("id")]
+        [JsonProperty("id", Required = Required.Always)]
         public string Id { get; set; }
-        [JsonProperty("name")]
+        [JsonProperty("name", Required = Required.Always)]
         public string Text { get; set; }
-        [JsonProperty("description")]
+        [JsonProperty("description", Required = Required.Always)]
         public string Description { get; set; }
-        [JsonProperty("category")]
+        [JsonProperty("category", Required = Required.Always)]
         public string Category { get; set; }
-        [JsonProperty("amount")]
+        [JsonIgnore]
         public double Amount { get; set; }
-        [JsonProperty("unit")]
+        [JsonProperty("unit", Required = Required.Always)]
         public string Unit { get; set; } = "";
 
-        bool bought;
-        int lastUpdate;
+        [JsonProperty("bought", Required = Required.Always)]
+        public bool Bought;
 
+        [JsonProperty("lastUpdateTimestamp", Required = Required.Always)]
+        public int LastUpdate;
+
+        [JsonIgnore]
         public string Quantity { get
             {
                 if(Amount == 0.0)
@@ -34,28 +38,43 @@ namespace android.Models
 
             } }
 
+        [JsonIgnore]
         public bool Switch { get
             {
-                return switch_;
+                return Bought;
             }
             set
             {
-                if (switch_ != value)
+                if (Bought != value)
                 {
-                    switch_ = value;
+                    Bought = value;
                     SwitchChanged.Invoke(this);
                 }
             }
         }
 
+        [JsonProperty("amount", Required = Required.Always)]
+        public string JsonAmount
+        {
+            get
+            {
+                return Amount.ToString();
+            }
+
+            set
+            {
+                Amount = Double.Parse(value);
+            }
+        }
+
         public int CompareTo(Item rhs)
         {
-            if (switch_ == rhs.switch_)
+            if (Bought == rhs.Bought)
             {
                 return 0;
             }
 
-            if(rhs.switch_)
+            if(rhs.Bought)
             {
                 return -1;
             }
@@ -63,9 +82,6 @@ namespace android.Models
             return 1;
         }
 
-        private bool switch_;
-
         public event Action<Item> SwitchChanged;
-
     }
 }

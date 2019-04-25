@@ -17,11 +17,6 @@ using android.Services;
 
 namespace android.Views
 {
-    struct Items
-    {
-        public List<Item> items;
-    }
-
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class ItemsPage : ContentPage
     {
@@ -36,18 +31,6 @@ namespace android.Views
 
         async void OnItemSelected(object sender, SelectedItemChangedEventArgs args)
         {
-            string path = System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Personal), "ziemniak");
-            if (!System.IO.File.Exists(path))
-            {
-                System.IO.File.WriteAllText(path, "puste");
-            }
-
-            var text = System.IO.File.ReadAllText(path);
-            System.IO.File.WriteAllText(path, text + "yesy");
-            
-            Console.WriteLine("zaladowalem:" + text);
-          
-
             var item = args.SelectedItem as Item;
             if (item == null)
                 return;
@@ -67,7 +50,7 @@ namespace android.Views
 
         async void TestItem_Clicked(object sender, EventArgs e)
         {
-            viewModel.FetchItemsAsync();
+            await viewModel.FetchItemsAsync();
         }
 
         protected override void OnAppearing()

@@ -31,7 +31,7 @@ struct Item {
     unit: String,
 
     bought : bool,
-    last_update : i32,
+    last_update_timestamp : i32,
 }
 
 #[derive(GraphQLInputObject)]
@@ -44,7 +44,7 @@ struct ItemState {
     unit: String,
 
     bought : bool,
-    updated_at : i32, //secs since epoch  - easier to serialize as millis :)
+    last_update_timestamp : i32, //secs since epoch  - easier to serialize as millis :)
 }
 
 #[derive(GraphQLInputObject)]
@@ -99,8 +99,8 @@ impl MemDb {
         let mut items_removed_by_others = Vec::new();
         update.items.into_iter().for_each(|new| {
             if let Some(local) =  self.items.get_mut(&new.id) {
-                if local.last_update < new.updated_at {
-                    local.last_update = new.updated_at;
+                if local.last_update_timestamp < new.last_update_timestamp {
+                    local.last_update_timestamp = new.last_update_timestamp;
                     local.bought = new.bought;
                     local.category = new.category;
                     local.name = new.name;
@@ -121,7 +121,7 @@ impl MemDb {
 
                     bought : new.bought,
 
-                    last_update : new.updated_at,
+                    last_update_timestamp : new.last_update_timestamp,
                 });
             }
         });
@@ -135,7 +135,7 @@ impl MemDb {
     fn detect_and_remove_items_deleted_by_client(client_ids : HashSet<String>, client_last_server_update : i32, local_items : &mut HashMap<String, Item>, historical_items : &mut HashMap<String, Item>) {
         local_items.retain(| local_id, local_item | {
             if !client_ids.contains(local_id) {
-                if local_item.last_update < client_last_server_update {
+                if local_item.last_update_timestamp < client_last_server_update {
                     historical_items.insert(local_id.clone(), local_item.clone());
                     false
                 } else {
