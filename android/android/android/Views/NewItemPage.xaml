@@ -1,17 +1,20 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="android.Views.NewItemPage"
-             Title="New Item">
-    <ContentPage.ToolbarItems>
-        <ToolbarItem Text="Save" Clicked="Save_Clicked" />
-    </ContentPage.ToolbarItems>
+             x:Class="android.Views.NewItemPage">
+    <!--Title="New Item"-->
+    <!-- <ContentPage.ToolbarItems> -->
+    <!--     <ToolbarItem is></ToolbarItem> -->
+    <!--     <ToolbarItem Text="Save" Clicked="Save_Clicked" /> -->
+    <!--     <ToolbarItem Text="Cancel" Clicked="Cancel_Clicked" /> -->
+    <!-- </ContentPage.ToolbarItems> -->
+   
     <ContentPage.Content>
         <StackLayout Spacing="20" Padding="15">
             <Label Text="Text" FontSize="Medium" />
-            <Entry Text="{Binding Item.Text}" FontSize="Small" />
+            <Editor x:Name="UiTextEdit" Text="{Binding Item.Text}" FontSize="Small"  />
             <Label Text="Description" FontSize="Medium" />
-            <Editor Text="{Binding Item.Description}" FontSize="Small" Margin="0" />
+            <Editor x:Name="UiTextDescription" Text="{Binding Item.Description}" FontSize="Small" Margin="0" />
         </StackLayout>
     </ContentPage.Content>
 </ContentPage>

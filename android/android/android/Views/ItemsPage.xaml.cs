@@ -34,9 +34,7 @@ namespace android.Views
             var item = args.SelectedItem as Item;
             if (item == null)
                 return;
-
-            viewModel.Items.Remove(item);
-
+            
             await Navigation.PushAsync(new ItemDetailPage(new ItemDetailViewModel(item)));
 
             // Manually deselect item.
@@ -48,7 +46,7 @@ namespace android.Views
             await Navigation.PushModalAsync(new NavigationPage(new NewItemPage()));
         }
 
-        async void TestItem_Clicked(object sender, EventArgs e)
+        async void Refresh_Clicked(object sender, EventArgs e)
         {
             await viewModel.FetchItemsAsync();
         }
@@ -59,10 +57,6 @@ namespace android.Views
 
             if (viewModel.Items.Count == 0)
                 viewModel.LoadItemsCommand.Execute(null);
-        }
-
-        private void ItemSwitched(object sender, ToggledEventArgs e)
-        {
         }
     }
 }

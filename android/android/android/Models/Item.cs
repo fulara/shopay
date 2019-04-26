@@ -13,15 +13,16 @@ namespace android.Models
         public string Text { get; set; }
         [JsonProperty("description", Required = Required.Always)]
         public string Description { get; set; }
+
         [JsonProperty("category", Required = Required.Always)]
-        public string Category { get; set; }
+        public string Category { get; set; } = "";
         [JsonIgnore]
-        public double Amount { get; set; }
+        public double Amount { get; set; } = 0.0;
         [JsonProperty("unit", Required = Required.Always)]
         public string Unit { get; set; } = "";
 
         [JsonProperty("bought", Required = Required.Always)]
-        public bool Bought;
+        public bool Bought = false;
 
         [JsonProperty("lastUpdateTimestamp", Required = Required.Always)]
         public int LastUpdate;

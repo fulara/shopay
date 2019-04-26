@@ -22,9 +22,7 @@ namespace android.Models
             foreach (var item in items)
             {
                 if (!this.items.ContainsKey(item.Id)) {
-                    this.items.Add(item.Id, item);
-                    item.SwitchChanged += Item_SwitchChanged;
-                    ObservableItems.Add(item);
+                    AddItemImpl(item);
                 } else
                 {
                     var localItem = this.items[item.Id];
@@ -35,6 +33,12 @@ namespace android.Models
                 }
             }
 
+            SortObservable();
+        }
+
+        public void AddItem(Item item)
+        {
+            AddItemImpl(item);
             SortObservable();
         }
 
@@ -61,6 +65,18 @@ namespace android.Models
         public List<Item> ItemSnapshot()
         {
             return items.Select(e => e.Value).ToList();
+        }
+
+        private void AddItemImpl(Item item)
+        {
+            if (items.ContainsKey(item.Id))
+            {
+                throw new Exception($"Attempting to add id that is already present: {item.Id}");
+            }
+
+            items.Add(item.Id, item);
+            item.SwitchChanged += Item_SwitchChanged;
+            ObservableItems.Add(item);
         }
 
         private void OverrideItem(Item toOverride, Item with)
