@@ -27,6 +27,11 @@ namespace android.Models
         [JsonProperty("lastUpdateTimestamp", Required = Required.Always)]
         public int LastUpdate;
 
+        public Item()
+        {
+            Id = Guid.NewGuid().ToString();
+        }
+
         [JsonIgnore]
         public string Quantity { get
             {

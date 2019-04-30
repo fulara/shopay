@@ -26,7 +26,7 @@ namespace android.ViewModels
             }
         }
 
-        private ItemStore itemStore = new ItemStore();
+        public ItemStore itemStore = new ItemStore();
 
         public Command LoadItemsCommand { get; set; }
 

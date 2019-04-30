@@ -8,7 +8,7 @@ using System.Text;
 
 namespace android.Models
 {
-    class ItemStore
+    public class ItemStore
     {
         private Dictionary<string, Item> items = new Dictionary<string, Item>();
 

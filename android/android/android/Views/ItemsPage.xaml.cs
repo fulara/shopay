@@ -43,7 +43,7 @@ namespace android.Views
 
         async void AddItem_Clicked(object sender, EventArgs e)
         {
-            await Navigation.PushModalAsync(new NavigationPage(new NewItemPage()));
+            await Navigation.PushModalAsync(new NavigationPage(new NewItemPage(viewModel.itemStore)));
         }
 
         async void Refresh_Clicked(object sender, EventArgs e)

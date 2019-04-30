@@ -12,8 +12,10 @@ namespace android.Views
     [XamlCompilation(XamlCompilationOptions.Compile)]
     public partial class NewItemPage : ContentPage
     {
-        public NewItemPage()
+        private ItemStore store;
+        public NewItemPage(ItemStore store)
         {
+            this.store = store;
             NavigationPage.SetHasNavigationBar(this, false);
             InitializeComponent();
 
@@ -52,28 +54,43 @@ namespace android.Views
 
             foreach (var definition in WordLookup.Get(text).Take(10))
             {
-                AddSearchHint(definition.Name);
+                AddSearchHint(definition.Name, definition);
             }
         }
 
 
-        private void AddSearchHint(string hint)
+        private void AddSearchHint(string hint, WordLookup.Definition definition)
         {
             var row = SearchResultContainerEntry.Children.Count / 3;
-            SearchResultContainerEntry.Children.Add(new Label
+            var label = new Label
             {
                 Text = hint,
-            }, 0, row);
+            };
 
-            SearchResultContainerEntry.Children.Add(new Label
+            SearchResultContainerEntry.Children.Add(label, 0, row);
+
+            var addb = new Button()
             {
                 Text = "+",
-            }, 1, row);
+            };
+
+            addb.Clicked += (sender, args) => { AddClicked(label, hint, definition); };
+            SearchResultContainerEntry.Children.Add(addb, 1, row);
 
             SearchResultContainerEntry.Children.Add(new Label
             {
                 Text = "++",
             }, 2, row);
+        }
+
+        private void AddClicked(Label label, string hint, WordLookup.Definition definition)
+        {
+            label.BackgroundColor = Color.GreenYellow;
+
+            var item = new Item();
+            item.Category = definition.Category;
+            item.Text = hint;
+            store.AddItem(item);
         }
     }
 }
