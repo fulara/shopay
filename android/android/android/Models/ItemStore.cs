@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
+using Xamarin.Forms.Internals;
 
 namespace android.Models
 {
@@ -31,6 +32,18 @@ namespace android.Models
                         OverrideItem(localItem, item);
                     }
                 }
+            }
+
+            SortObservable();
+        }
+
+        public void RemoveSelected()
+        {
+            var toRemove = items.Select(e => e.Value).Where(i => i.Bought).ToList();
+
+            foreach (var item in toRemove)
+            {
+                items.Remove(item.Id);
             }
 
             SortObservable();

@@ -1,0 +1,17 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="android.Views.EditPage">
+    <ContentPage.Content>
+        <StackLayout>
+            <Label Text="Name"/>
+            <Editor x:Name="NameEdit"/>
+            <Label Text="Details"/>
+            <Editor x:Name="NameDetails"/>
+            <Label Text="Quantity"/>
+            <Editor x:Name="NameQuantity"/>
+            <Label Text="Unit"/>
+            <Editor x:Name="NameUnit"/>
+        </StackLayout>
+    </ContentPage.Content>
+</ContentPage>

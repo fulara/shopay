@@ -9,14 +9,14 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="50" />
                 </Grid.ColumnDefinitions>
-                <Editor Grid.Column="0" x:Name="UiNameEdit" Text="Potato" BackgroundColor="White" Margin="0" TextChanged="UiNameEdit_OnTextChanged"/>
+                <Editor Grid.Column="0" x:Name="UiNameEdit" BackgroundColor="White" Margin="0" TextChanged="UiNameEdit_OnTextChanged"/>
                 <Button Grid.Column="1" x:Name="UiSubmit" Text="+" Clicked="Save_Clicked"/>
             </Grid>
             <Grid x:Name="SearchResultContainerEntry">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="30" />
-                    <ColumnDefinition Width="30" />
+                    <ColumnDefinition Width="40" />
                 </Grid.ColumnDefinitions>
             </Grid>
         </StackLayout>

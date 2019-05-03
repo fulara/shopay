@@ -28,12 +28,9 @@ namespace android.ViewModels
 
         public ItemStore itemStore = new ItemStore();
 
-        public Command LoadItemsCommand { get; set; }
-
         public ItemsViewModel()
         {
             Title = "Browse";
-            LoadItemsCommand = new Command(async () => await ExecuteLoadItemsCommand());
 
             MessagingCenter.Subscribe<NewItemPage, Item>(this, "AddItem", async (obj, item) =>
             {
@@ -72,6 +69,12 @@ namespace android.ViewModels
         {
             var items = await Fetcher.ItemsAsync();
             itemStore.HandleSnapshot(items.items);
+        }
+
+        public async Task RemoveSelectedAsync()
+        {
+            itemStore.RemoveSelected();
+            await Fetcher.Update(itemStore.ItemSnapshot());
         }
     }
 }

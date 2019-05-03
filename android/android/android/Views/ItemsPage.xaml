@@ -19,6 +19,13 @@
                 </OnPlatform>
             </ToolbarItem.Icon>
         </ToolbarItem>
+        <ToolbarItem Text="RemSelected" Clicked="RemoveSelected_Clicked">
+            <ToolbarItem.Icon>
+                <OnPlatform x:TypeArguments="FileImageSource">
+                    <On Platform="UWP" Value="add.png"/>
+                </OnPlatform>
+            </ToolbarItem.Icon>
+        </ToolbarItem>
     </ContentPage.ToolbarItems>
     <ContentPage.Content>
         <StackLayout>

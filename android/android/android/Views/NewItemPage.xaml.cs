@@ -22,6 +22,11 @@ namespace android.Views
             BindingContext = this;
         }
 
+        protected override void OnDisappearing()
+        {
+            base.OnDisappearing();
+        }
+
         async void Cancel_Clicked(object sender, EventArgs e)
         {
             await Navigation.PopModalAsync();
@@ -74,13 +79,20 @@ namespace android.Views
                 Text = "+",
             };
 
+            addb.HeightRequest = 20;
             addb.Clicked += (sender, args) => { AddClicked(label, hint, definition); };
             SearchResultContainerEntry.Children.Add(addb, 1, row);
 
-            SearchResultContainerEntry.Children.Add(new Label
+            var addEditB = new Button()
             {
                 Text = "++",
-            }, 2, row);
+            };
+
+            addEditB.HeightRequest = 20;
+
+            addEditB.Clicked += (sender, args) => { AddEditClicked(label, hint, definition); };
+
+            SearchResultContainerEntry.Children.Add(addEditB, 2, row);
         }
 
         private void AddClicked(Label label, string hint, WordLookup.Definition definition)
@@ -91,6 +103,18 @@ namespace android.Views
             item.Category = definition.Category;
             item.Text = hint;
             store.AddItem(item);
+        }
+
+        private void AddEditClicked(Label label, string hint, WordLookup.Definition definition)
+        {
+            label.BackgroundColor = Color.GreenYellow;
+
+            var item = new Item();
+            item.Category = definition.Category;
+            item.Text = hint;
+            store.AddItem(item);
+
+            Navigation.PushModalAsync(new EditPage(item));
         }
     }
 }

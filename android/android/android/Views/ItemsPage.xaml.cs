@@ -51,12 +51,17 @@ namespace android.Views
             await viewModel.FetchItemsAsync();
         }
 
-        protected override void OnAppearing()
+        async void RemoveSelected_Clicked(object sender, EventArgs e)
+        {
+            await viewModel.RemoveSelectedAsync();
+        }
+
+        protected override async void OnAppearing()
         {
             base.OnAppearing();
 
             if (viewModel.Items.Count == 0)
-                viewModel.LoadItemsCommand.Execute(null);
+                await viewModel.FetchItemsAsync();
         }
     }
 }

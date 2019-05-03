@@ -11,8 +11,9 @@ namespace android.Models
         public string Id { get; set; }
         [JsonProperty("name", Required = Required.Always)]
         public string Text { get; set; }
+
         [JsonProperty("description", Required = Required.Always)]
-        public string Description { get; set; }
+        public string Description { get; set; } = "";
 
         [JsonProperty("category", Required = Required.Always)]
         public string Category { get; set; } = "";
